@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PHOTO QUALITY MAKER</title>
+  <style>
+    /* CSS*/
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      padding: 20px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    
+    .input-form {
+      margin-bottom: 20px;
+    }
+    
+    .result {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    button {
+      display: block;
+      margin: 0 auto;
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PHOTO QUALITY </h1>
+  </header>
+  <div class="container">
+    <div class="input-form">
+      <label for="originalImage">IMAGE INSERT KRE:</label>
+      <input type="file" id="originalImage">
+    </div>
+    
+    <div class="input-form">
+      <label for="qualityRange">HIGHT AND LOW QUALITY RANG SELECT :</label>
+      <input type="range" id="qualityRange" min="0" max="100" step="1" value="80">
+    </div>
+    
+    <button onclick="processImage()">CLICK PROCESS</button>
+    
+    <div class="result">
+      <p id="resultMessage"></p>
+      <img id="processedImage" alt="Processed Image">
+    </div>
+  </div>
+  <script>
+    function processImage() {
+      var originalImage = document.getElementById('originalImage').files[0];
+      var qualityRange = document.getElementById('qualityRange').value;
+      
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          var ctx = canvas.getContext('2d');
+          var maxWidth = 800;
+          var maxHeight = 600;
+          var width = img.width;
+          var height = img.height;
+          
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          var processedImageData = canvas.toDataURL('image/jpeg', qualityRange / 100);
+          document.getElementById('processedImage').src = processedImageData;
+          document.getElementById('resultMessage').textContent = 'PROCESS COMLITED';
+        };
+        
+        img.src = event.target.result;
+      };
+      
+      reader.readAsDataURL(originalImage);
+    }
+  </script>
+</body>
+</html>
